@@ -2,4 +2,4 @@
 Connected-Device
 
 
-Already upload the "Module2" into 'Assignment2' branch.
+Already upload the "Module3" into 'Assignment3' branch.
