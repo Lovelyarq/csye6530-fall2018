@@ -1,0 +1,111 @@
+'''
+Created on 2018年9月22日
+
+@author: jrq
+'''
+
+
+'''
+
+import sense_hat
+from labs.common import ActuatorData
+
+from labs.module03 import SimpleLedActivator
+from labs.module03 import SenseHatLedActivator
+
+
+
+
+sensh = sense_hat.SenseHat()
+SimpLedAct = SimpleLedActivator.SimpleLedActivator()
+SensHatAct = SenseHatLedActivator.SenseHatLedActivator()
+'''
+
+from labs.common import ActuatorData
+AcData = ActuatorData.ActuatorData()
+
+class TempActuatorEmulator(): 
+    
+    def __init__(self):
+        '''
+        nothing
+        '''
+    
+    def setMessage(self,command,errCode,stateData,statusCode):
+        
+        
+        self.updcom = AcData.setCommand(command)
+        self.updeerC = AcData.setErrorCode(errCode)
+        self.updstateD = AcData.setStateData(stateData)
+        self.updstateC = AcData.setStatusCode(statusCode)
+        
+    def processMessage(self, Data):
+        self.data = Data
+        
+        AcData.updateData(self.data)
+        self.Led() 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+    AcData = None    
+    SimpLedAct = None
+    SensHatAct = None
+
+    def __init__(self):
+        
+        SimpLedAct.daemon = True
+        SimpLedAct.enableLed = True
+        SimpLedAct.start() 
+        
+        SensHatAct.daemon = True
+        SensHatAct.enableLed = True
+        SensHatAct.start()
+        
+    def processMessage(self,command,name,errCode,stateData,statusCode):
+        
+        
+        self.updcom = AcData.setCommand(command)
+        self.updname = AcData.setName(name)
+        self.updeerC = AcData.setErrorCode(errCode)
+        self.updstateD = AcData.setStateData(stateData)
+        self.updstateC = AcData.setStatusCode(statusCode)
+    
+    def process_message(self, Data):
+        AcData.updateData(Data)
+        SimpLedAct.setEnableLedFlag(True)
+        self.Led()
+
+    def Led(self):
+                
+        if (AcData.getCommand() == 0):
+            SensHatAct.setEnableLedFlag(True)
+            m = "Temperature is lowered "
+            print(m)
+            SensHatAct.setDisplayMessage(m)
+            
+        elif (AcData.getCommand() == 1):
+            SensHatAct.setEnableLedFlag(False)
+            m = "Temperature is high "
+            print(m)
+            SensHatAct.setDisplayMessage(m)
+            
+        else:
+            print('nothing happen')
+    
+   '''

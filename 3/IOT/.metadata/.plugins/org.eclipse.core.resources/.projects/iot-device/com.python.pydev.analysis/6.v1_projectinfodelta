@@ -1,0 +1,12 @@
+INSTUPlabs.module03.TempActuatorEmulator
+/Users/jrq/Desktop/Photon_IOT/iot-device/apps/labs/module03/TempActuatorEmulator.py
+INFOS:&&3|1|2|0|3|26|1&&1|4|2|0|3|28|7&&2|5|2|4|3|32|9&&2|6|2|4|3|38|9&&3|7|2|8|3|39|9&&2|9|2|4|3|42|9
+/Users/jrq/Desktop/Photon_IOT/iot-device/apps/labs/module03/TempActuatorEmulator.py=3
+AcData=1
+processMessage=6
+labs.module03.TempActuatorEmulator=2
+TempActuatorEmulator=4
+Data=7
+__init__=5
+Push=9
+TempActuatorEmulator.processMessage=8
