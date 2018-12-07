@@ -1,0 +1,31 @@
+'''
+Created on 2018年9月15日
+
+@author: jrq
+'''
+#import sys
+#sys.path.append('/home/pi/workspace/iot-device/apps')
+
+SMTP = 'smtp'
+MQTT = 'mqtt'
+CLOUD = 'cloud'
+
+DEVICE = 'device'
+
+SECTION_SEPARATOR = '.'
+
+
+SMTP_CLOUD_SECTION = SMTP + SECTION_SEPARATOR + CLOUD
+MQTT_CLOUD_SECTION = MQTT + SECTION_SEPARATOR + CLOUD
+DEVICE_SECTION = DEVICE
+
+
+nominalTemp = 20
+enableEmulator = True
+
+HOST_KEY = 'host'
+PORT_KEY = 'port'
+FROM_ADDRESS_KEY = 'fromaddr'
+TO_ADDRESS_KEY = 'toaddr'
+USER_AUTH_TOKEN_KEY = 'authtoken'
+

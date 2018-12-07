@@ -1,0 +1,38 @@
+'''
+Created on 2018年9月15日
+
+@author: jrq
+'''
+
+
+
+from time import sleep
+from labs.module03 import TempSensorAdaptor
+from labs.module03 import TempActuatorEmulator
+from labs.module03 import TempSensorEmulator
+#from labs.module02 import SmtpClientConnector
+
+
+tempSensAdaptor = TempSensorAdaptor.TempSensorAdaptor()
+tempActuEmulator = TempActuatorEmulator.TempActuatorEmulator()
+tempSensEmulator = TempSensorEmulator.TempSensorEmulator()
+
+tempSensAdaptor.daemon  = True
+tempActuEmulator.daemon = True
+tempSensEmulator.daemon = True
+
+print('- - - - - - - - - - - - - - - - - - - - - - - - ')
+print("Starting system performance app daemon thread...")
+
+tempSensAdaptor.enableEmulator = True
+#tempActuEmulator.enableAcEmulator = True
+tempSensEmulator.enableEmulator   = True
+
+tempSensEmulator.start()
+tempSensAdaptor.start()
+#tempActuEmulator.start()
+
+
+while (True):
+    sleep(10)
+    pass
