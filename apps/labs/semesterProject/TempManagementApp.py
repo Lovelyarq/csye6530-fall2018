@@ -8,7 +8,7 @@ Created on 2018年9月15日
 #sys.path.append('/home/pi/workspace/iot-device/apps')
 
 from time import sleep
-from labs.module03 import TempSensorAdaptor
+from labs.semesterProject import TempSensorAdaptor
 
 tempSensAdaptor = TempSensorAdaptor.TempSensorAdaptor()
 tempSensAdaptor.daemon  = True
