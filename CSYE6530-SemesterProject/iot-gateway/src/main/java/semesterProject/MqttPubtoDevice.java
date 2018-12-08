@@ -4,6 +4,8 @@ package semesterProject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
 /**
  * @author Ruiqing Jiang
  *
@@ -38,6 +40,10 @@ public class MqttPubtoDevice {
 	// public methods
 	/**
 	 * Connect to the MQTT client and publish a test message to the given topic
+	 * The publish part for Gateway to Device is using in the MqttClientConnect.java
+	 * in here : public void messageArrived(String data, MqttMessage msg) throws Exception {
+	 * This start is just a example for testing.
+	 * 
 	 */
 	public void start() {
 		//Create a new MqttClient:_Client and connection

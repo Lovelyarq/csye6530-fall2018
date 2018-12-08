@@ -29,9 +29,9 @@ enableEmulator = True
 #SMTP
 HOST_KEY = 'smtp.163.com'
 PORT_KEY = '587'
-FROM_ADDRESS_KEY = 'A6178382877@163.com'
-TO_ADDRESS_KEY = 'jiangruiqing1023@gmail.com'
-USER_AUTH_TOKEN_KEY = 'A123456'
+FROM_ADDRESS_KEY = 'private information@163.com'
+TO_ADDRESS_KEY = 'private information@gmail.com'
+USER_AUTH_TOKEN_KEY = 'private information'
 
 #COAP
 COAP_HOST = '192.168.0.199'

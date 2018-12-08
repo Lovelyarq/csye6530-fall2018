@@ -55,4 +55,5 @@ def run():
     mc.loop_forever()
 
 
-
+if __name__ == '__main__':  # pragma: no cover
+    run()

@@ -18,7 +18,7 @@ from sense_hat import SenseHat
 from labs.semesterProject import SmtpClientConnector 
 from labs.semesterProject import TempActuatorEmulator
 from labs.semesterProject import CoapClientConnector
-from labs.semesterProject import mqttClient
+
 
 DEFAULT_RATE_IN_SEC = 15
 

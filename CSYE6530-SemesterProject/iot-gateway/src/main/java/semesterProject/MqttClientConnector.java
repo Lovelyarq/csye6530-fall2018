@@ -29,8 +29,6 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
 
 /**
  * @author Ruiqing Jiang
@@ -247,7 +245,13 @@ public class MqttClientConnector implements MqttCallback {
 		
 
 		
-		
+		/**
+		 * Starting the MQTT publish to the new topic ActuatorData
+		 * The iot-device will subscribe this topic and get the payload
+		 * Using qos level 1.
+		 * disconnect after published.
+		 * 
+		 */
 		if (msg.getId() == 1) {
 			System.out.println("======================Start Sending Data Demo======================");
 			System.out.print("Sending Actuator Data to the iot-Device.....\n");
