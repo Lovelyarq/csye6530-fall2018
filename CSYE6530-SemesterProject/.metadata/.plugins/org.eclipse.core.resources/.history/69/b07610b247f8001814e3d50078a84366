@@ -1,0 +1,15 @@
+package senseHAT;
+
+
+public interface EnvironmentSensorAdapter {
+
+	    double getHumidity();
+
+	    double getTemperatureFromHumidity();
+
+	    double getPressure();
+
+	    double getTemperatureFromPressure();
+	}
+
+}

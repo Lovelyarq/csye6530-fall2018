@@ -1,0 +1,164 @@
+package semesterProject;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import common.ConfigConst;
+
+public class MqttConnGateToDev implements MqttCallback {
+
+	// static
+	private static final Logger _Logger = Logger.getLogger(MqttConnGateToDev.class.getName());
+	
+	// params
+	private String _protocol = ConfigConst.DEFAULT_MQTT_PROTOCOL;
+	private String _host = ConfigConst.DEFAULT_MQTT_SERVER;
+	private int _port = ConfigConst.DEFAULT_MQTT_PORT;
+	private String _MqttClientID;
+	private String _brokerAddress;
+	private MqttClient _Client;
+
+	// constructors
+	/**
+	 * Default.
+	 *
+	 */
+	public MqttConnGateToDev() {
+		this(null, false);
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param host: The name of the broker to connect.
+	 * @param isSecure Currently unused.
+	 */
+	public MqttConnGateToDev(String host, boolean isSecure) {
+		super();
+		
+		// NOTE: 'isSecure' ignored for now
+		if (host != null && host.trim().length() > 0) {
+			_host = host;
+		}
+		
+		// NOTE: URL does not have a protocol handler for "tcp", construct the URL manually		
+		_MqttClientID = MqttClient.generateClientId();
+		_Logger.info("Using client ID for broker conn: " + _MqttClientID);
+		_brokerAddress = _protocol + "://" + _host + ":" + _port;
+		_Logger.info("Using URL for broker conn: " +  _brokerAddress);
+	}
+
+	// public methods
+	/**
+	 * Connect to MqttClient:_Client
+	 */
+	public void connect() {
+		if (_Client == null) {
+			MemoryPersistence persistence = new MemoryPersistence();
+			try {
+				_Client = new MqttClient(_brokerAddress, _MqttClientID, persistence);
+				MqttConnectOptions cOptions = new MqttConnectOptions();
+				cOptions.setCleanSession(true);
+				_Client.setCallback(this);
+				_Client.connect(cOptions);
+				_Logger.info("Connected to the broker: " + _brokerAddress);
+			} catch (MqttException e) {
+				_Logger.log(Level.SEVERE, "Failed!! to connect to the broker: " + _brokerAddress, e);
+			}
+		}
+	}
+
+	/**
+	 * disconnect to MqttClient:_Client
+	 */
+	public void disconnect() {
+		try {
+			_Client.disconnect();
+			_Logger.info("Disconnected from the broker: " + _brokerAddress);
+		} catch (Exception e) {
+			_Logger.log(Level.SEVERE, "Failed!!! to disconnect from the broker: " +  _brokerAddress, e);
+		}
+	}
+
+	/**
+	 * Publishes the given payload to broker directly to topic 'topic'.
+	 *
+	 * @param topic: destination topic that the message direct to
+	 * @param qosLevel: 0: at most once, 1: at least once, 2: exactly once
+	 * @param payload
+	 */
+	//publishMessage
+	public boolean publishMessage(String topic, int qosLevel, byte[] payload) {
+		boolean success = false;
+		try {
+			_Logger.info("Publishing message to topic: " + topic);
+			
+			//create a new MqttMessage, pass 'payload' to the constructor
+			MqttMessage msg = new MqttMessage(payload);
+		
+			//set the QoS to qosLevel
+			msg.setQos(qosLevel);
+			
+			//call 'publish' on the MQTT client, passing the 'topic' and MqttMessage
+			msg.setRetained(true);
+			_Client.publish(topic, msg);
+			success = true;
+		} catch (Exception e) {
+			_Logger.log(Level.SEVERE, "Failed!!! to publish MQTT message: " + e.getMessage());
+		}
+		return success;
+	}
+
+	//subscribeToAll
+	public boolean subscribeToAll() {
+		try {
+
+			_Client.subscribe("$SYS/#");
+			_Logger.log(Level.INFO, "Subscribe to all successfully.");
+			return true;
+		} catch (MqttException e) {
+			_Logger.log(Level.WARNING, "Failed!! to subscribe to all topics.", e);
+		}
+		return false;
+	}
+
+	//subscribeToTopic
+	public boolean subscribeToTopic(String topic) {
+		try {
+			_Client.subscribe(topic);
+			_Logger.log(Level.INFO, "Subscribe to Topic successfully.");
+			return true;
+		} catch (MqttException e) {
+			_Logger.log(Level.WARNING, "Failed!! to subscribe to Topic topics.", e);
+		}
+		return false;
+	}
+
+    //Connection Lost
+	public void connectionLost(Throwable t) {
+		// TODO: now what?
+		_Logger.log(Level.WARNING, "Connection lost.....", t);
+	}
+
+	//deliveryComplete
+	public void deliveryComplete(IMqttDeliveryToken token) {
+		try {
+			_Logger.info("Delivery complete: " + token.getMessageId() + " - " + token.getResponse() + " - "
+					+ token.getMessage());
+		} catch (Exception e) {
+			_Logger.log(Level.SEVERE, "Failed!! to retrieve message from token.", e);
+		}
+	}
+
+	//messageArrived
+	public void messageArrived(String data, MqttMessage msg) throws Exception {
+		_Logger.info("Message arrived: " + data + ", " + msg.getId() + ", " + msg.toString());
+	}
+
+}

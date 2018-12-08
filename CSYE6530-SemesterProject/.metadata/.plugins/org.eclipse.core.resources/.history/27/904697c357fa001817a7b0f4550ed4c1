@@ -1,0 +1,72 @@
+package semesterProject;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+public class TempActuatorSubscriberApp {
+	
+	private String _userName = "A1E-hRhHhHVjakJvL8VNMxjLCzfNN7BOMJ";
+	private String _authToken = null;
+	private String _pemFileName = "/Users/jrq/Documents/pem/ubidots.pem";
+	private String _host = "things.ubidots.com";
+
+	// // private var's static
+	private static final Logger _Logger = Logger.getLogger(TempActuatorSubscriberApp.class.getName());
+	private static TempActuatorSubscriberApp _App;
+	
+	// params
+	private MqttClientConnectorCloud _Client;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		_App = new TempActuatorSubscriberApp();
+		try {
+			_App.start();
+		} catch (Exception e) {
+		 	_Logger.log(Level.WARNING, "Failed!! to start _App.", e);
+		}
+	}
+	
+	// constructors
+	/**
+	 * Default.
+	 */
+
+	public TempActuatorSubscriberApp() {
+		super();
+	}
+	
+	// public methods
+	/**
+	 * Connect to the MQTT client, then: 1) If this is the subscribe app, subscribe
+	 * to the given topic 2) If this is the publish app, publish a test message to
+	 * the given topic
+	 */
+	public void start() {
+		_Client = new MqttClientConnector(_host, _userName, _pemFileName, _authToken);
+		_Client.connect();
+		//Subscribe with the topic
+		String topic = "/v1.6/devices/homeiotgateway/tempactuator";
+		_Client.subscribeToTopic(topic); 
+		String topic2 = "/v1.6/devices/homeiotgateway/tempsensor";
+		_Client.subscribeToTopic(topic2);
+		String topicMin = "/v1.6/devices/homeiotgateway/tempsensorMin";
+		_Client.subscribeToTopic(topicMin); 
+		String topicMax = "/v1.6/devices/homeiotgateway/tempsensorMax";
+		_Client.subscribeToTopic(topicMax);
+		String topicAvg = "/v1.6/devices/homeiotgateway/tempsensorAvg";
+		_Client.subscribeToTopic(topicAvg); 
+		String topicAccount = "/v1.6/devices/homeiotgateway/tempsensorAccount";
+		_Client.subscribeToTopic(topicAccount);
+		
+		
+		
+		//_Client.subscribeToAll(); 
+		//_Client.disconnect();
+	}
+	
+	
+	
+
+}

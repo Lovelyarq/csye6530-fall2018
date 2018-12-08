@@ -1,0 +1,61 @@
+
+package module8;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import module8.MqttClientConnector;
+
+
+/**
+ * @author Ruiqing Jiang
+ *
+ */
+public class TempSensorPublisherApp {
+	
+	private String _userName = "A1E-hRhHhHVjakJvL8VNMxjLCzfNN7BOMJ";
+	private String _authToken = null;
+	private String _pemFileName = "/Users/jrq/Documents/pem/ubidots.pem";
+	private String _host = "things.ubidots.com";
+	
+	// static
+	private static final Logger _Logger = Logger.getLogger(TempSensorPublisherApp.class.getName());
+	private static TempSensorPublisherApp _App;
+	
+	// params
+	private MqttClientConnector _Client;
+	
+
+	public TempSensorPublisherApp() {
+		// default
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		_App = new TempSensorPublisherApp();
+		try {
+			_App.start();
+		} catch (Exception e) {
+			_Logger.log(Level.WARNING, "Failed!! to start _App.", e);
+		}
+	}
+	
+	//things.ubidots.com
+	public void start() {
+		//_mqttClient = new MqttClientConnector(configconst.DEFAULT_UBIDOTS_SERVER, "{user test roken}", "user/..../ubidots_cert.pem");
+		_Client = new MqttClientConnector(_host, _userName, _pemFileName, _authToken);
+		_Client.connect();
+		String topic = "/v1.6/devices/homeiotgateway/tempsensor";
+		
+		// Set the temperature to 12
+		String payload = "25";
+		
+		String topicSS = "Tess" ;
+		String payloadtest = "15";
+		_Client.publishMessage(topicSS, 0, payloadtest.getBytes());
+		//publish payload with the topic in Qoslevel 0
+		_Client.publishMessage(topic, 0, payload.getBytes());
+		_Client.disconnect();
+	}
+}

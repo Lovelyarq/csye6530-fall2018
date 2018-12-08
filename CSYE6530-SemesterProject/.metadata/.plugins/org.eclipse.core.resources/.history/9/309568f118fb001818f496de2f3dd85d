@@ -1,0 +1,40 @@
+'''
+Created on 2018年12月6日
+
+@author: okok_no
+'''
+import os,sys
+sys.path.append('/home/pi/Desktop/workspace/iot-device/apps')
+import paho.mqtt.client as mqttClient
+
+from time import sleep
+from labs.module03 import TempSensorAdaptor
+
+Tem = TempSensorAdaptor.TempSensorAdaptor()
+print("Starting system performance app daemon thread...")
+
+Tem.enableEmulator = True
+Tem.daemon = True
+Tem.start()
+def on_connect(clientConn, data, flags, resultCode):
+    print("Client connected to server. Result: " + str(resultCode))
+
+# NOTE: This subscribes to ALL topics (depending on broker implementation)
+
+    clientConn.subscribe("myActuatorData") 
+def on_message(clientConn, data, msg):
+
+    print("Received PUBLISH on topic {0}. Payload: {1}".format(str(msg.topic), str(msg.payload)))
+    Tem.tragerActuator(msg.payload)
+
+mc = mqttClient.Client()
+
+mc.on_connect = on_connect
+
+mc.on_message = on_message
+mc.connect("test.mosquitto.org", 1883, 60)
+
+mc.loop_forever()
+
+
+

@@ -1,0 +1,9 @@
+INSTUPlabs.semesterProject.mqttClient
+/Users/jrq/Desktop/Photon_IOT/iot-device/apps/labs/semesterProject/mqttClient.py
+INFOS:&&3|1|2|0|3|11|1&&2|4|2|0|3|14|5&&2|5|2|0|3|22|5&&3|6|2|0|3|36|1
+SensHat=1
+mc=6
+on_connect=4
+labs.semesterProject.mqttClient=2
+/Users/jrq/Desktop/Photon_IOT/iot-device/apps/labs/semesterProject/mqttClient.py=3
+on_message=5

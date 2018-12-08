@@ -1,0 +1,17 @@
+'''
+Created on 2018年12月4日
+
+@author: jrq
+'''
+
+class MyClass(object):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, params):
+        '''
+        Constructor
+        '''
+        

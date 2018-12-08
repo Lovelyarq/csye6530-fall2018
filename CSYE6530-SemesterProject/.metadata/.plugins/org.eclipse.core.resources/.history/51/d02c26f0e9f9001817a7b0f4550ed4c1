@@ -1,0 +1,240 @@
+package semesterproject;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
+public class MqttClientConnectorCloud implements MqttCallback {
+	// static
+	private static final Logger _Logger = Logger.getLogger(MqttClientConnectorCloud.class.getName());
+	// params
+	private String _protocol;
+	private String _host;
+	private int _port;
+	private String _clientID;
+	private String _brokerAddr;
+	private MqttClient _mqttClient;
+	private String _pemFileName = "/Users/rocky_yan/Desktop/ubidots_cert.pem";
+	private String _userName;
+	private String _authToken;
+	private boolean _isSecureConn;
+
+	// constructors
+	/**
+	 * Constructor.
+	 *
+	 * @param host     The name of the broker to connect.
+	 * @param isSecure Currently unused.
+	 */
+	public MqttClientConnectorCloud(String host, String userName, String authToken, String pemFileName) {
+		super();
+		if (host != null && host.trim().length() > 0) {
+			_host = host;
+		}
+		if (userName != null && userName.trim().length() > 0) {
+			_userName = userName;
+		}
+		if (authToken != null && authToken.trim().length() > 0) {
+			_authToken = authToken;
+		}
+		if (pemFileName != null) {
+			File file = new File(pemFileName);
+
+			if (file.exists()) {
+				_protocol = "ssl";
+				_port = 8883;
+				_pemFileName = pemFileName;
+				_isSecureConn = true;
+				_Logger.info("PEM file valid. Using secure connection: " + _pemFileName);
+			} else {
+				_Logger.warning("PEM file invalid. Using insecure connection: " + pemFileName);
+			}
+		}
+		_clientID = MqttClient.generateClientId();
+		_brokerAddr = _protocol + "://" + _host + ":" + _port;
+		_Logger.info("Using URL for broker conn: " + _brokerAddr);
+	}
+
+	/**
+	 * This is going to make a connection with Ubidots ( Ubidots is a kind of
+	 * cloud-based IoT service which I choose in my semester project)
+	 */
+
+	public void connect() {
+		if (_mqttClient == null) {
+			MemoryPersistence persistence = new MemoryPersistence();
+			try {
+				_mqttClient = new MqttClient(_brokerAddr, _clientID, persistence);
+				MqttConnectOptions connOpts = new MqttConnectOptions();
+				// clean session
+				connOpts.setCleanSession(true);
+				if (_userName != null) {
+					connOpts.setUserName(_userName);
+				}
+				// We are using a secure connection
+				if (_isSecureConn) {
+					initSecureConnection(connOpts);
+				}
+				_mqttClient.setCallback(this);
+				_mqttClient.connect(connOpts);
+
+				_Logger.info("Connected to broker: " + _brokerAddr);
+				
+			} catch (MqttException e) {
+				_Logger.log(Level.SEVERE, "Failed to connect to broker: " + _brokerAddr, e);
+			}
+		}
+	}
+
+	/**
+	 * This is going to configure TLS TLS is kind of security protocol
+	 * 
+	 * @param connOpts
+	 */
+	private void initSecureConnection(MqttConnectOptions connOpts) {
+		try {
+			_Logger.info("Configuring TLS...");
+			SSLContext sslContext = SSLContext.getInstance("SSL");
+			KeyStore keyStore = readCertificate();
+			TrustManagerFactory trustManagerFactory = TrustManagerFactory
+					.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			trustManagerFactory.init(keyStore);
+			sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
+			connOpts.setSocketFactory(sslContext.getSocketFactory());
+		} catch (Exception e) {
+			_Logger.log(Level.SEVERE, "Failed to initialize secure MQTT connection.", e);
+		}
+	}
+
+	private KeyStore readCertificate()
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+		FileInputStream fis = new FileInputStream(_pemFileName);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
+
+		ks.load(null);
+
+		while (bis.available() > 0) {
+			Certificate cert = cf.generateCertificate(bis);
+			ks.setCertificateEntry("adk_store" + bis.available(), cert);
+		}
+		return ks;
+	}
+
+	public void disconnect() {
+		try {
+			_mqttClient.disconnect();
+			_Logger.info("Disconnected from broker: " + _brokerAddr);
+			System.out.println("Disconnected from broker:" + _brokerAddr);
+		} catch (Exception e) {
+			_Logger.log(Level.SEVERE, "Failed to disconnect from broker: " + _brokerAddr, e);
+			System.out.println(e.toString());
+			System.out.println(e.getMessage());
+		}
+	}
+
+	/**
+	 * Publishes the given payload to broker directly to topic 'topic'.
+	 *
+	 * @param topic
+	 * @param qosLevel
+	 * @param payload
+	 */
+	public boolean publishMessage(String topic, int qosLevel, byte[] payload) {
+		boolean success = false;
+		try {
+			_Logger.info("Publishing message to topic: " + topic);
+			// TODO: create a new MqttMessage, pass 'payload' to the constructor
+			MqttMessage message = new MqttMessage();
+			message.setPayload(payload);
+			// TODO: set the QoS on the message to qosLevel
+			message.setQos(qosLevel);
+			// TODO: call 'publish' on the MQTT client, passing the 'topic' and MqttMessage
+			_mqttClient.publish(topic, message);
+			// instance
+			// TODO: log the result - include the ID from the message
+			System.out.println("Done!The MqttMessageID is" + message.getId());
+			success = true;
+		} catch (Exception e) {
+			_Logger.log(Level.SEVERE, "Failed to publish MQTT message: " + e.getMessage());
+			System.out.println(e.getMessage() + " " + e.toString());
+		}
+		return success;
+	}
+
+	public boolean subscribeToAll() {
+		try {
+			_mqttClient.subscribe("$SYS/#");
+			return true;
+		} catch (MqttException e) {
+			_Logger.log(Level.WARNING, "Failed to subscribe to all topics.", e);
+			// print the exception
+			System.out.println(e.toString());
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
+
+	/**
+	 * just subscibe the specialized topic
+	 */
+	public boolean subscribeToTopic(String topic, int qosLevel) {
+		try {
+			_mqttClient.subscribe(topic, qosLevel);
+			System.out.println("Topic" + topic);
+			return true;
+		} catch (MqttException e) {
+			System.out.println(e.toString());
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
+
+	public void connectionLost(Throwable t) {
+		_Logger.log(Level.WARNING, "Connection to broker lost. Will retry soon.", t);
+		System.out.println("No connection");
+	}
+
+
+	public void deliveryComplete(IMqttDeliveryToken token) {
+		
+		try {
+			_Logger.info("Delivery complete: " + token.getMessageId() + " - " + token.getResponse() + " - "
+					+ token.getMessage());
+			System.out.println("Delivery complete: " + token.getMessageId() + " - " + token.getResponse() + " - "
+					+ token.getMessage());
+		} catch (Exception e) {
+			_Logger.log(Level.SEVERE, "Failed to retrieve message from token.", e);
+		}
+	}
+
+
+	public void messageArrived(String data, MqttMessage msg) throws Exception {
+		_Logger.info("Message arrived: " + data + ", " + msg.getId());
+		System.out.println("Message arrived: " + data + ", " + msg.getId());
+		_Logger.info(msg.toString());
+
+	}
+}

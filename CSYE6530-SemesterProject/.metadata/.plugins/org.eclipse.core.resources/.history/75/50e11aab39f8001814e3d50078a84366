@@ -1,0 +1,5 @@
+package smtp;
+
+public class Smtp {
+
+}

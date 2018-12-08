@@ -1,0 +1,21 @@
+package semesterProject;
+
+public class GatewayManagementApp{
+
+	public void run() {
+		//Start CoAP server
+		try {
+			CoapServerConnection CoapServer = new CoapServerConnection();
+			CoapServer.start();
+		}catch(Exception e) {
+			System.out.println("Failed!! to start _App.");
+		}
+	}
+	
+	public static void main(String[] args) {
+		GatewayManagementApp gatewayApp = new GatewayManagementApp();
+		gatewayApp.run();
+	}
+	
+}
+

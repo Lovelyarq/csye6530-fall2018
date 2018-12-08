@@ -1,0 +1,19 @@
+'''
+Created on 2018年12月4日
+
+@author: jrq
+'''
+from labs.module07 import CoapClientConnector
+
+
+class MyClass(object):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, params):
+        '''
+        Constructor
+        '''
+        

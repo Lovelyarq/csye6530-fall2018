@@ -1,0 +1,69 @@
+package semesterProject;
+
+import java.util.logging.Logger;
+import org.eclipse.californium.core.CoapResource;
+import org.eclipse.californium.core.CoapServer;
+
+
+
+public class CoapServerConnector {
+	
+	private String _userName = "A1E-hRhHhHVjakJvL8VNMxjLCzfNN7BOMJ";
+	private String _authToken = null;
+	private String _pemFileName = "/Users/jrq/Documents/pem/ubidots.pem";
+	private String _host = "things.ubidots.com";
+
+	
+	// static
+	private static final Logger _Logger = Logger.getLogger(CoapServerConnector.class.getName());
+	// private var's
+	private CoapServer _coapServer;
+
+	// constructors
+	/**
+	 * Default.
+	 *
+	 */
+	public CoapServerConnector() {
+		super();
+		_coapServer = new CoapServer();
+		TempResourceHandler tempHandler = new TempResourceHandler();
+		addResource(tempHandler);
+	}
+
+	// public methods
+	public void addResource(CoapResource resource) {
+		if (resource != null) {
+			_coapServer.add(resource);
+		}
+	}
+	
+	
+	/**
+	 *  This is going to start the CoAP server
+	 */
+	public void start() {
+		if (_coapServer == null) {
+			_Logger.info("Creating CoAP server instance and 'temp' handler...");
+
+		}
+		_Logger.info("Starting CoAP server...");
+		_coapServer.start();
+		
+		//Start Mqtt clientCloud
+		MqttClientConnectorCloud _mqttClient = new MqttClientConnectorCloud(_host,_userName, _authToken,_pemFileName);
+		_mqttClient.connect();
+		String topicName = "/v1.6/devices/homeiotgateway/Tempsensor";
+		String payload = "28";
+		_mqttClient.publishMessage(topicName, 1, payload.getBytes());
+		//_mqttClient.disconnect();
+	}
+
+	/**
+	 *  This is going to stop the CoAP server
+	 */
+	public void stop() {
+		_Logger.info("Stopping CoAP server...");
+		_coapServer.stop();
+	}
+}

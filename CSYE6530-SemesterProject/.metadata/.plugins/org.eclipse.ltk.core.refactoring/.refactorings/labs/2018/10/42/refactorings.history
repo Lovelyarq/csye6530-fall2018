@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;labs/src/main/java/csye6530/labs/CoapClient.java&apos; to &apos;CoapClientApp.java&apos;" description="Rename resource &apos;CoapClient.java&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/java/csye6530/labs/CoapClient.java" name="CoapClientApp.java" stamp="1540045942428" updateReferences="true"/>
+</session>

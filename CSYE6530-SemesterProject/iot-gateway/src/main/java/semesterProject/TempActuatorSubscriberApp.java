@@ -1,0 +1,83 @@
+package semesterProject;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * @author Ruiqing Jiang
+ *
+ */
+
+public class TempActuatorSubscriberApp {
+	
+	private String _userName = "A1E-hRhHhHVjakJvL8VNMxjLCzfNN7BOMJ";
+	private String _authToken = null;
+	private String _pemFileName = "/Users/jrq/Documents/pem/ubidots.pem";
+	private String _host = "things.ubidots.com";
+
+	// // private var's static
+	private static final Logger _Logger = Logger.getLogger(TempActuatorSubscriberApp.class.getName());
+	private static TempActuatorSubscriberApp _App;
+	
+	// params
+	private MqttClientConnector _Client;
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		_App = new TempActuatorSubscriberApp();
+		try {
+			_App.start();
+		} catch (Exception e) {
+		 	_Logger.log(Level.WARNING, "Failed!! to start _App.", e);
+		}
+	}
+	
+	// constructors
+	/**
+	 * Default.
+	 */
+
+	public TempActuatorSubscriberApp() {
+		super();
+	}
+	
+	// public methods
+	/**
+	 * Connect to the MQTT client, then: 1) If this is the subscribe app, subscribe
+	 * to the given topic 2) If this is the publish app, publish a test message to
+	 * the given topic
+	 * 
+	 * We will use subscribe app here.
+	 * And we catch 5 vars here. 
+	 * They are tempactuator;tempsensor;tempsensormin;tempsensormax;tempsensoravg;
+	 */
+	public void start() {
+		_Client = new MqttClientConnector(_host, _userName, _pemFileName, _authToken);
+		_Client.connect();
+		//Subscribe with the topic
+		String topic = "/v1.6/devices/homeiotgateway/tempactuator";
+		_Client.subscribeToTopic(topic); 
+		String topic2 = "/v1.6/devices/homeiotgateway/tempsensor";
+		_Client.subscribeToTopic(topic2);
+		String topicMin = "/v1.6/devices/homeiotgateway/tempsensormin";
+		_Client.subscribeToTopic(topicMin); 
+		String topicMax = "/v1.6/devices/homeiotgateway/tempsensormax";
+		_Client.subscribeToTopic(topicMax);
+		String topicAvg = "/v1.6/devices/homeiotgateway/tempsensoravg";
+		_Client.subscribeToTopic(topicAvg); 
+		
+		
+
+
+		
+		
+		
+		//_Client.subscribeToAll(); 
+		//_Client.disconnect();
+	}
+	
+	
+	
+
+}

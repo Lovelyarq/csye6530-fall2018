@@ -1,0 +1,59 @@
+package semesterProject;
+
+import java.util.logging.Logger;
+
+
+
+public class GatewayApp{
+	private static final Logger _Logger =
+	 Logger.getLogger(GatewayApp.class.getName());
+	private static GatewayApp _APP;
+
+	public void run() {
+		//Start CoAP server
+		try {
+			CoapServerConnection CoapServer = new CoapServerConnection();
+			CoapServer.start();
+		}catch(Exception e) {
+			System.out.println("Failed!! to start _App.");
+		}
+	}
+
+	public static void main(String[] args) {
+		GatewayApp gatewayApp = new GatewayApp();
+		gatewayApp.run();
+	}
+	
+}
+
+//// static
+//private static final Logger _Logger =
+//		 Logger.getLogger(CoapServerApp.class.getName());
+//private static CoapServerApp _App;
+///**
+//* @param args
+//*/
+//
+//public static void main(String[] args){
+//	 _App = new CoapServerApp();
+//	 try {
+//		 _Logger.info("ServerApp.start!!");
+//		 _App.start();
+//	 } catch (Exception e) {
+//		 _Logger.info("ServerApp.start Failed!!");
+//	 }
+//}
+//
+//// private var's
+//private CoapServerConnection _coapServer;
+//
+//// constructors
+//public CoapServerApp(){
+//	 super();
+//}
+//
+//// public methods
+//public void start(){
+//	 _coapServer = new CoapServerConnection();
+//	 _coapServer.start();
+//}

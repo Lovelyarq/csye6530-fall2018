@@ -1,0 +1,31 @@
+'''
+Created on 2018年12月4日
+
+@author: jrq
+'''
+
+from coapthon.resources.resource import Resource
+
+
+class TestCoapResource(Resource):
+
+    
+    def __init__(self, name="TestCoapResource", coap_server=None):
+    
+    
+        super(TestCoapResource, self).__init__(name, coap_server, visible=True, observable=True, allow_children=True)
+        self.payload = "Test CoAP Resource"
+        self.resource_type = "rt1"
+        self.content_type = "text/plain"
+        self.interface_type = "if1"
+    
+    
+    # only ‘GET’ is provided; review the CoAPthon documentation for
+    # examples implementing ‘PUT’, ‘POST’, ‘DELETE’: https://github.com/Tanganelli/CoAPthon
+    def render_GET(self, request):
+    
+        
+        print("Successfully retrieved this message from TestCoapResource. Payload: " + 
+        str(self.payload))
+        self.payload = "Successful GET"
+        return self

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.util.logging.Logger"/>
+<fullyQualifiedTypeName name="java.util.logging.Level"/>
+<fullyQualifiedTypeName name="org.eclipse.californium.core.CoapClient"/>
+<fullyQualifiedTypeName name="org.eclipse.californium.core.WebLink"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="org.eclipse.californium.core.CoapResponse"/>
+<fullyQualifiedTypeName name="org.eclipse.californium.core.CoapServer"/>
+<fullyQualifiedTypeName name="org.eclipse.californium.core.CoapResource"/>
+<fullyQualifiedTypeName name="org.eclipse.californium.core.server.resources.CoapExchange"/>
+<fullyQualifiedTypeName name="org.eclipse.californium.core.coap.CoAP.ResponseCode"/>
+<fullyQualifiedTypeName name="module7.CoapServerConnection"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="mqtt.MqttClientConnectorr"/>
+</qualifiedTypeNameHistroy>

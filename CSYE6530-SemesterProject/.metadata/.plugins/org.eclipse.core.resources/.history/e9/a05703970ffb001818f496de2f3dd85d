@@ -1,0 +1,98 @@
+'''
+Created on Sep 28, 2018
+
+@author: xingli
+'''
+import os, sys
+sys.path.append('/home/pi/Desktop/xing/iot-device/apps')
+import threading
+from time import sleep
+from random import uniform
+from labs.common import SensorData
+from labs.module02 import SmtpClientConnector
+from labs.common import ConfigUtil
+from labs.common import ConfigConst
+from labs.common.ActuatorData import ActuatorData
+#from labs.module10 TempActuatorEmulator import TempActuatorEmulator
+from labs.module10 import CoapSimpleClientConnector
+from sense_hat import SenseHat
+# from labs.module04.I2CSenseHatAdaptor import I2CSenseHatAdaptor
+
+DEFAULT_FATE_IN_SEC = 5
+
+
+class TempSensorAdaptor(threading.Thread):
+    enableAdaptor = False
+    actuatorData = None
+    tempActuatorEmulator = None
+    connector = SmtpClientConnector.SmtpClientConnector()
+    sensorData = SensorData.SensorData() 
+    alertDiff = 5
+    rateInSec = DEFAULT_FATE_IN_SEC
+    enableEmulator = False
+    lowVal = 0
+    highVal = 30
+    curTemp = 0
+    isPrevTempSet = True
+    
+    
+    # Constructor
+    def __init__(self):
+        super(TempSensorAdaptor, self).__init__()    
+        self.config = ConfigUtil.ConfigUtil('')
+        self.config.loadConfig()
+        self.actuatorData = ActuatorData()
+        self.tempActuatorEmulator = TempActuatorEmulator()
+        self.senseHat = SenseHat()
+#         self.i2CSenseHatAdapter = I2CSenseHatAdaptor()
+        self.coapConnector = CoapSimpleClientConnector.CoapSimpleClientConnector()
+    
+    # set enableEmulator      
+    def setEnableAdaptorFlag(self, flag):
+        self.enableAdaptor = flag
+        
+    def run(self):
+        self.nominalTemp = int(self.config.getProperty(ConfigConst.CONSTRAINED_DEVICE, ConfigConst.NOMINAL_TEMP_KEY))  # get the value of nominal temperature from ConfigConst class
+        self.t = True
+        while self.t:
+            if self.enableAdaptor:
+                self.curTemp = self.senseHat.get_temperature() # get a emulated temperature
+#                 self.curTemp = self.i2CSenseHatAdapter.humidData  # need to change to temp!!!!!!!!!!!!!!!!!!!!1
+               # print(self.curTemp)
+                self.sensorData.addValue(self.curTemp, "tempVal")  # add current temperature to SensorData class
+                print('\n--------------------') 
+                print('New sensor readings:') 
+                # print(' ' + str(self.sensorData))
+                self.coapConnector.initClient()
+                self.coapConnector.handleGetTest("temp")
+                self.coapConnector.handlePostTest("temp", str(self.curTemp))
+                if self.isPrevTempSet == False:  # skip if this is the first temperature
+                    self.prevTemp = self.curTemp
+                    self.isPrevTempSet = True 
+                self.t = False   
+#                 else:
+#                     self.sendEmail()
+#                     self.tragerActuator()
+            sleep(self.rateInSec)    
+    
+    # if the current temperature is larger or less than the average temperature more than the alert value, publish the message
+    def sendEmail(self):
+        if (abs(self.curTemp - self.sensorData.getAvgValue()) >= self.alertDiff):  
+            print('\n Current temp exceeds average by > ' + str(self.alertDiff) + '. Triggeringalert...')
+            self.connector.publishMessage('Exceptional sensor data [test]', str(self.sensorData))
+    
+    # if the current temperature is larger or less than the nominal temperature more than the alert level, run the actuator to adjust the temperature
+    def tragerActuator(self, data):
+        if True:  
+            print('\n+++++++++++++++++++') 
+            print('to the actuator:') 
+            val = self.curTemp - self.nominalTemp
+            self.actuatorData.setValue(val)
+            if (val > 0):
+                print('val > 0')
+                self.actuatorData.setCommand(1)
+            else:
+                print('val < 0')
+                self.actuatorData.setCommand(0)
+            self.tempActuatorEmulator.processMessage(data)
+        
