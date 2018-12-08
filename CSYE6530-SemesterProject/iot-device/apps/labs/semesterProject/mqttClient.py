@@ -3,14 +3,19 @@ Created on 2018年12月2日
 
 @author: jrq
 '''
+
+import sys
+sys.path.append('/home/pi/workspace/iot-device/apps')
+
+
 import paho.mqtt.client as mqttClient
 from labs.semesterProject import SenseHatLedActivator
-from test.test_ttk_guionly import button
+
+
 
  
- 
 SensHat = SenseHatLedActivator.SenseHatLedActivator()
-button = "enable"
+buttonn = "enable"
  
 def on_connect(clientConn, _userName, _pemFileName, resultCode):
  
@@ -28,20 +33,26 @@ def on_message(clientConn, data, msg):
     #split the spring: example:{"timestamp": 1544219224392, "context": {}, "value": 38.0, "id": "5c0aea585916363eb0eaaf68"}
     #this code is to get the "value" of the msg.payload, which is 38 in the example
     print ("Request from the cloud: Set temp to" + str( strr.split(',')[-2].split(':')[1]) )
-    
+    tempData = str( strr.split(',')[-2].split(':')[1])
      
-    message =( "Set temp to"  +  str( strr.split(',')[-2].split(':')[1]) ) 
+    message ="Set temp to" + tempData
     print(message)
-    if button == "enable" :
+    if buttonn == "enable" :
+        print("Sense Hat start showing!")
+        SensHat.setEnableLedFlag(True)
         SensHat.setDisplayMessage(message)
     else:
         print("Please enable the button for this actuator.")
-     
-mc = mqttClient.Client()
-mc.on_connect = on_connect
-mc.on_message = on_message
-mc.connect("test.mosquitto.org", 1883, 60)
-mc.loop_forever()
+
+def run():
+    mc = mqttClient.Client()
+    mc.on_connect = on_connect
+    #Start senHat
+    SensHat.daemon = True
+    SensHat.start()
+    mc.on_message = on_message
+    mc.connect("test.mosquitto.org", 1883, 60)
+    mc.loop_forever()
 
 
 

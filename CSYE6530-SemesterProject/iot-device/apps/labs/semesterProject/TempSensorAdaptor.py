@@ -4,8 +4,8 @@ Created on 2018年9月22日
 @author: jrq
 '''
 
-#import sys
-#sys.path.append('/home/pi/workspace/iot-device/apps')
+import sys
+sys.path.append('/home/pi/workspace/iot-device/apps')
 
 import random
 from time import sleep
@@ -18,6 +18,7 @@ from sense_hat import SenseHat
 from labs.semesterProject import SmtpClientConnector 
 from labs.semesterProject import TempActuatorEmulator
 from labs.semesterProject import CoapClientConnector
+from labs.semesterProject import mqttClient
 
 DEFAULT_RATE_IN_SEC = 15
 
@@ -105,8 +106,10 @@ class TempSensorAdaptor (threading.Thread):
                         self.sensorData = Sens.__str__()
                         #Used SMTP to send message to remote device.
                         SmtpConnector.publishMessage('Exceptional sensor data [test]', self.sensorData)
+                        
 
-                    
+                   
+                       
                 sleep(self.rateInSec)
                 
 

@@ -22,6 +22,7 @@ public class TempResourceHandler extends CoapResource {
 	private String _host = "things.ubidots.com";
 	
 	private MqttClientConnector _Client;
+
 	
 	// constructors 
 	public TempResourceHandler() {
@@ -70,6 +71,10 @@ public class TempResourceHandler extends CoapResource {
 		//publish payload with the topic in Qoslevel 0
 		_Client.publishMessage(topic, 0, payload.getBytes());
 		_Client.disconnect();
+		
+
+		
+		
 	
 
 		_Logger.info("Handling POST:" + responseMsg);

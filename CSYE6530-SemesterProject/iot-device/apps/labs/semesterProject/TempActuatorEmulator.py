@@ -3,8 +3,8 @@ Created on 2018年9月22日
 
 @author: jrq
 '''
-#import sys
-#sys.path.append('/home/pi/workspace/iot-device/apps')
+import sys
+sys.path.append('/home/pi/workspace/iot-device/apps')
 
 from labs.common import ActuatorData
 from labs.semesterProject import SenseHatLedActivator
@@ -16,7 +16,7 @@ AcData = ActuatorData.ActuatorData()
 SensHat = SenseHatLedActivator.SenseHatLedActivator()
 config = ConfigUtil.ConfigUtil
 
-button = "False"
+buttonn = "False"
 
 class TempActuatorEmulator(): 
     def __init__(self):
@@ -46,7 +46,7 @@ class TempActuatorEmulator():
         SensHat.setEnableLedFlag(True)
         #Send the msg to sense_hat
         message = "ActuatorMsg::" + AcData.getStateData()
-        if button == "enable" :
+        if buttonn == "enable" :
             SensHat.setDisplayMessage(message)
         else:
             print("Please enable the button for this actuator.")

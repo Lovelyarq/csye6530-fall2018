@@ -4,8 +4,8 @@ Created on 2018年12月1日
 @author: jrq
 '''
 
-#import sys
-#sys.path.append('/home/pi/workspace/iot-device/apps')
+import sys
+sys.path.append('/home/pi/workspace/iot-device/apps')
 
 from coapthon.client.helperclient import HelperClient
 from labs.common import ConfigUtil

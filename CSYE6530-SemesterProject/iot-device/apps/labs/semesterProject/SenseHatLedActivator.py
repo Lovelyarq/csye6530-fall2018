@@ -3,8 +3,8 @@ Created on 2018年9月22日
 
 @author: jrq
 '''
-#import sys
-#sys.path.append('/home/pi/workspace/iot-device/apps')
+import sys
+sys.path.append('/home/pi/workspace/iot-device/apps')
 
 from time import sleep
 from sense_hat import SenseHat
